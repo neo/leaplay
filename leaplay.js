@@ -1,5 +1,5 @@
 var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+var camera = new THREE.PerspectiveCamera( 60, window.innerWidth/window.innerHeight, 0.1, 1000 );
 var renderer = new THREE.WebGLRenderer( {
 	alpha: true,
 	antialias: true
@@ -7,7 +7,7 @@ var renderer = new THREE.WebGLRenderer( {
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
-camera.position.set(0,250,500);
+camera.position.set(0,250,300);
 camera.lookAt(new THREE.Vector3(0,250,0));
 
 var material = new THREE.MeshNormalMaterial();
@@ -16,10 +16,10 @@ var hands = new THREE.Object3D();
 var cubes = new THREE.Object3D();
 scene.add(hands, cubes);
 
-var ballGeometry = new THREE.SphereGeometry(10,32,32);
+var ballGeometry = new THREE.SphereGeometry(4,32,32);
 for (var i = 0; i < 5; i++) hands.add(new THREE.Mesh(ballGeometry, material));
 
-var cubeGeometry = new THREE.BoxGeometry(50,50,50);
+var cubeGeometry = new THREE.BoxGeometry(25,25,25);
 
 var render = function () {
 	requestAnimationFrame( render );
