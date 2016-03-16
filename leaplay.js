@@ -4,6 +4,7 @@ var material = new THREE.MeshNormalMaterial();
 var ballGeometry = new THREE.SphereGeometry(4,32,32);
 var cubeGeometry = new THREE.BoxGeometry(25,25,25);
 var handBodies = [], ballShape = new CANNON.Sphere(4);
+var cubeBodies = [], cubeShape = new CANNON.Box(new CANNON.Vec3(12.5,12.5,12.5));
 
 function init () {
 	scene = new THREE.Scene();
@@ -16,7 +17,7 @@ function init () {
 	document.body.appendChild( renderer.domElement );
 
 	world = new CANNON.World();
-	world.gravity.set(0, -10, 0);
+	world.gravity.set(0, -100, 0);
 
 	camera.position.set(0,250,300);
 	camera.lookAt(new THREE.Vector3(0,250,0));
@@ -33,7 +34,9 @@ function init () {
 var render = function () {
 	requestAnimationFrame( render );
 	renderer.render(scene, camera);
+	world.step(timestep);
 	for (var i = handBodies.length - 1; i >= 0; i--) handBodies[i].position.copy(hands.children[i].position);
+	for (var i = cubeBodies.length - 1; i >= 0; i--) cubes.children[i].position.copy(cubeBodies[i].position);
 };
 
 init();
@@ -61,6 +64,14 @@ Leap.loop(function (frame) {
 			var scale = (1 - hand.grabStrength) ? 1 - hand.grabStrength : soSmall;
 			currentCube.scale.set(scale,scale,scale);
 		}
-		if (hand.grabStrength === 0 && isGrab) isGrab = false;
+		if (hand.grabStrength === 0 && isGrab) {
+			isGrab = false;
+			cubeBodies.push(new CANNON.Body({
+				mass: 1,
+				shape: cubeShape,
+				position: currentCube.position
+			}));
+			world.add(cubeBodies[cubeBodies.length - 1]);
+		}
 	}
 });
