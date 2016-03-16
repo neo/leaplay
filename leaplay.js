@@ -1,33 +1,38 @@
-var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera( 60, window.innerWidth/window.innerHeight, 0.1, 1000 );
-var renderer = new THREE.WebGLRenderer( {
-	alpha: true,
-	antialias: true
-} );
-renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild( renderer.domElement );
+var scene, camera, renderer, world, hands, cubes;
 
-var world = new CANNON.World();
-world.gravity.set(0, -10, 0);
+function init () {
+	scene = new THREE.Scene();
+	camera = new THREE.PerspectiveCamera( 60, window.innerWidth/window.innerHeight, 0.1, 1000 );
+	renderer = new THREE.WebGLRenderer( {
+		alpha: true,
+		antialias: true
+	} );
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	document.body.appendChild( renderer.domElement );
 
-camera.position.set(0,250,300);
-camera.lookAt(new THREE.Vector3(0,250,0));
+	world = new CANNON.World();
+	world.gravity.set(0, -10, 0);
+
+	camera.position.set(0,250,300);
+	camera.lookAt(new THREE.Vector3(0,250,0));
+
+	hands = new THREE.Object3D();
+	cubes = new THREE.Object3D();
+	scene.add(hands, cubes);
+
+	for (var i = 0; i < 5; i++) hands.add(new THREE.Mesh(ballGeometry, material));
+}
 
 var material = new THREE.MeshNormalMaterial();
-
-var hands = new THREE.Object3D();
-var cubes = new THREE.Object3D();
-scene.add(hands, cubes);
-
 var ballGeometry = new THREE.SphereGeometry(4,32,32);
-for (var i = 0; i < 5; i++) hands.add(new THREE.Mesh(ballGeometry, material));
-
 var cubeGeometry = new THREE.BoxGeometry(25,25,25);
 
 var render = function () {
 	requestAnimationFrame( render );
 	renderer.render(scene, camera);
 };
+
+init();
 render();
 
 var isGrab = false;
