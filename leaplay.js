@@ -1,4 +1,9 @@
-var scene, camera, renderer, world, hands, cubes;
+var scene, camera, renderer, world, hands, cubes, timestep = 1/60;
+
+var material = new THREE.MeshNormalMaterial();
+var ballGeometry = new THREE.SphereGeometry(4,32,32);
+var cubeGeometry = new THREE.BoxGeometry(25,25,25);
+var handBodies = [], ballShape = new CANNON.Sphere(4);
 
 function init () {
 	scene = new THREE.Scene();
@@ -21,15 +26,14 @@ function init () {
 	scene.add(hands, cubes);
 
 	for (var i = 0; i < 5; i++) hands.add(new THREE.Mesh(ballGeometry, material));
+	for (var i = 0; i < 5; i++) handBodies.push(new CANNON.Body({mass: 0,shape: ballShape}));
+	for (var i = handBodies.length - 1; i >= 0; i--) world.add(handBodies[i]);
 }
-
-var material = new THREE.MeshNormalMaterial();
-var ballGeometry = new THREE.SphereGeometry(4,32,32);
-var cubeGeometry = new THREE.BoxGeometry(25,25,25);
 
 var render = function () {
 	requestAnimationFrame( render );
 	renderer.render(scene, camera);
+	for (var i = handBodies.length - 1; i >= 0; i--) handBodies[i].position.copy(hands.children[i].position);
 };
 
 init();
