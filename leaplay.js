@@ -7,6 +7,9 @@ var renderer = new THREE.WebGLRenderer( {
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
+var world = new CANNON.World();
+world.gravity.set(0, -10, 0);
+
 camera.position.set(0,250,300);
 camera.lookAt(new THREE.Vector3(0,250,0));
 
