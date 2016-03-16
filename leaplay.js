@@ -29,6 +29,18 @@ function init () {
 	for (var i = 0; i < 5; i++) hands.add(new THREE.Mesh(ballGeometry, material));
 	for (var i = 0; i < 5; i++) handBodies.push(new CANNON.Body({mass: 0,shape: ballShape}));
 	for (var i = handBodies.length - 1; i >= 0; i--) world.add(handBodies[i]);
+
+	var floorBody = new CANNON.Body({
+		mass: 0,
+		shape: new CANNON.Plane()
+	});
+	floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI/2);
+	floorBody.position.set(0,100,0);
+	world.add(floorBody);
+	var floorMesh = new THREE.Mesh(new THREE.PlaneGeometry(500,500), material);
+	floorMesh.position.copy(floorBody.position);
+	floorMesh.quaternion.copy(floorBody.quaternion);
+	scene.add(floorMesh);
 }
 
 var render = function () {
@@ -36,7 +48,10 @@ var render = function () {
 	renderer.render(scene, camera);
 	world.step(timestep);
 	for (var i = handBodies.length - 1; i >= 0; i--) handBodies[i].position.copy(hands.children[i].position);
-	for (var i = cubeBodies.length - 1; i >= 0; i--) cubes.children[i].position.copy(cubeBodies[i].position);
+	for (var i = cubeBodies.length - 1; i >= 0; i--) {
+		cubes.children[i].position.copy(cubeBodies[i].position);
+		cubes.children[i].quaternion.copy(cubeBodies[i].quaternion);
+	}
 };
 
 init();
