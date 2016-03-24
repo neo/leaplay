@@ -1,10 +1,15 @@
 var scene, camera, renderer, world, hands, cubes, timestep = 1/60;
 
-var material = new THREE.MeshNormalMaterial();
 var ballGeometry = new THREE.SphereGeometry(4,32,32);
 var cubeGeometry = new THREE.BoxGeometry(25,25,25);
 var handBodies = [], ballShape = new CANNON.Sphere(4);
 var cubeBodies = [], cubeShape = new CANNON.Box(new CANNON.Vec3(12.5,12.5,12.5));
+var material = new THREE.MeshPhongMaterial({
+	color: 0x156289,
+	emissive: 0x072534,
+	side: THREE.DoubleSide,
+	shading: THREE.FlatShading
+});
 
 function init () {
 	scene = new THREE.Scene();
@@ -41,6 +46,10 @@ function init () {
 	floorMesh.position.copy(floorBody.position);
 	floorMesh.quaternion.copy(floorBody.quaternion);
 	scene.add(floorMesh);
+
+	var light = new THREE.PointLight(0xffffff, 1, 0);
+	light.position.set(0,250,300);
+	scene.add(light);
 }
 
 var render = function () {
