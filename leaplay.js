@@ -50,6 +50,12 @@ function init () {
 	var light = new THREE.PointLight(0xffffff, 1, 0);
 	light.position.set(0,250,300);
 	scene.add(light);
+
+	var loader = new THREE.ObjectLoader();
+	loader.load('models/cube.json', function (obj) {
+		scene.add(obj);
+		obj.position.set(0,250,290);
+	});
 }
 
 var render = function () {
