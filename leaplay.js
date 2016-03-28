@@ -1,9 +1,9 @@
-var scene, camera, renderer, world, hands, cubes, timestep = 1/60;
+var scene, camera, renderer, world, hands, birds, timestep = 1/60;
 
+var bird;
 var ballGeometry = new THREE.SphereGeometry(4,32,32);
-var cubeGeometry = new THREE.BoxGeometry(25,25,25);
 var handBodies = [], ballShape = new CANNON.Sphere(4);
-var cubeBodies = [], cubeShape = new CANNON.Box(new CANNON.Vec3(12.5,12.5,12.5));
+var birdBodies = [], birdShape = new CANNON.Sphere(10);
 var material = new THREE.MeshPhongMaterial({
 	color: 0x156289,
 	emissive: 0x072534,
@@ -28,8 +28,8 @@ function init () {
 	camera.lookAt(new THREE.Vector3(0,250,0));
 
 	hands = new THREE.Object3D();
-	cubes = new THREE.Object3D();
-	scene.add(hands, cubes);
+	birds = new THREE.Object3D();
+	scene.add(hands, birds);
 
 	for (var i = 0; i < 5; i++) hands.add(new THREE.Mesh(ballGeometry, material));
 	for (var i = 0; i < 5; i++) handBodies.push(new CANNON.Body({mass: 0,shape: ballShape}));
@@ -58,8 +58,7 @@ function init () {
 		var objLoader = new THREE.OBJLoader();
 		objLoader.setMaterials(mtl);
 		objLoader.load('models/bird.obj', function (obj) {
-			obj.position.set(0,250,0);
-			scene.add(obj);
+			bird = obj;
 		});
 	});
 }
@@ -69,18 +68,19 @@ var render = function () {
 	renderer.render(scene, camera);
 	world.step(timestep);
 	for (var i = handBodies.length - 1; i >= 0; i--) handBodies[i].position.copy(hands.children[i].position);
-	for (var i = cubeBodies.length - 1; i >= 0; i--) {
-		cubes.children[i].position.copy(cubeBodies[i].position);
-		cubes.children[i].quaternion.copy(cubeBodies[i].quaternion);
+	for (var i = birdBodies.length - 1; i >= 0; i--) {
+		birds.children[i].position.copy(birdBodies[i].position);
+		birds.children[i].quaternion.copy(birdBodies[i].quaternion);
 	}
 };
 
 init();
 render();
 
+var isHandsPinch = false;
 var isGrab = false;
 var soSmall = 0.01;
-var currentCube;
+var currentBird;
 Leap.loop(function (frame) {
 	if (frame.hands.length) {
 		var hand = frame.hands[0];
@@ -91,23 +91,23 @@ Leap.loop(function (frame) {
 		// console.log(hand.grabStrength, hand.pinchStrength);
 		if (hand.grabStrength === 1 && !isGrab) {
 			isGrab = true;
-			cubes.add(new THREE.Mesh(cubeGeometry, material));
-			currentCube = cubes.children[cubes.children.length - 1];
-			currentCube.position.fromArray(hand.palmPosition);
-			currentCube.scale.set(soSmall,soSmall,soSmall);
+			birds.add(bird.clone());
+			currentBird = birds.children[birds.children.length - 1];
+			currentBird.position.fromArray(hand.palmPosition);
+			currentBird.scale.set(soSmall,soSmall,soSmall);
 		}
 		if (hand.grabStrength < 1 && isGrab) {
 			var scale = (1 - hand.grabStrength) ? 1 - hand.grabStrength : soSmall;
-			currentCube.scale.set(scale,scale,scale);
+			currentBird.scale.set(scale,scale,scale);
 		}
 		if (hand.grabStrength === 0 && isGrab) {
 			isGrab = false;
-			cubeBodies.push(new CANNON.Body({
+			birdBodies.push(new CANNON.Body({
 				mass: 1,
-				shape: cubeShape,
-				position: currentCube.position
+				shape: birdShape,
+				position: currentBird.position
 			}));
-			world.add(cubeBodies[cubeBodies.length - 1]);
+			world.add(birdBodies[birdBodies.length - 1]);
 		}
 	}
 });
