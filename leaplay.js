@@ -48,8 +48,8 @@ function init () {
 	scene.add(floorMesh);
 
 	var lights = [];
-	lights.push(new THREE.HemisphereLight(0xffffbb, 0x080820, 1));
-	scene.add(lights[0]);
+	lights.push(new THREE.HemisphereLight(0xffffbb, 0x424242, 1));
+	for (var i = lights.length - 1; i >= 0; i--) scene.add(lights[i]);
 
 	var mtlLoader = new THREE.MTLLoader();
 	mtlLoader.load('models/bird.mtl', function (mtl) {
@@ -58,7 +58,7 @@ function init () {
 		var objLoader = new THREE.OBJLoader();
 		objLoader.setMaterials(mtl);
 		objLoader.load('models/bird.obj', function (obj) {
-			obj.position.set(0,250,250);
+			obj.position.set(0,250,0);
 			scene.add(obj);
 		});
 	});
