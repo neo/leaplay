@@ -47,14 +47,20 @@ function init () {
 	floorMesh.quaternion.copy(floorBody.quaternion);
 	scene.add(floorMesh);
 
-	var light = new THREE.PointLight(0xffffff, 1, 0);
-	light.position.set(0,250,300);
-	scene.add(light);
+	var lights = [];
+	lights.push(new THREE.HemisphereLight(0xffffbb, 0x080820, 1));
+	scene.add(lights[0]);
 
-	var loader = new THREE.ObjectLoader();
-	loader.load('models/cube.json', function (obj) {
-		scene.add(obj);
-		obj.position.set(0,250,290);
+	var mtlLoader = new THREE.MTLLoader();
+	mtlLoader.load('models/bird.mtl', function (mtl) {
+		console.log(mtl);
+		mtl.preload();
+		var objLoader = new THREE.OBJLoader();
+		objLoader.setMaterials(mtl);
+		objLoader.load('models/bird.obj', function (obj) {
+			obj.position.set(0,250,250);
+			scene.add(obj);
+		});
 	});
 }
 
