@@ -31,8 +31,8 @@ function init () {
 	birds = new THREE.Object3D();
 	scene.add(hands, birds);
 
-	for (var i = 0; i < 5; i++) hands.add(new THREE.Mesh(ballGeometry, material));
-	for (var i = 0; i < 5; i++) handBodies.push(new CANNON.Body({mass: 0,shape: ballShape}));
+	for (var i = 0; i < 10; i++) hands.add(new THREE.Mesh(ballGeometry, material));
+	for (var i = 0; i < 10; i++) handBodies.push(new CANNON.Body({mass: 0,shape: ballShape}));
 	for (var i = handBodies.length - 1; i >= 0; i--) world.add(handBodies[i]);
 
 	var floorBody = new CANNON.Body({
@@ -78,36 +78,39 @@ init();
 render();
 
 var isHandsPinch = false;
-var isGrab = false;
+var isGrab = [false, false];
 var soSmall = 0.01;
-var currentBird;
+var currentBirds = [];
 Leap.loop(function (frame) {
 	if (frame.hands.length) {
-		var hand = frame.hands[0];
-		for (var i = hand.fingers.length - 1; i >= 0; i--) {
-			var dip = hand.fingers[i].dipPosition;
-			hands.children[i].position.fromArray(dip);
+		for (var i = frame.hands.length - 1; i >= 0; i--) {
+			for (var j = frame.hands[i].fingers.length - 1; j >= 0; j--) {
+				var dip = frame.hands[i].fingers[j].dipPosition;
+				hands.children[5 * i + j].position.fromArray(dip);
+			}
 		}
 		// console.log(hand.grabStrength, hand.pinchStrength);
-		if (hand.grabStrength === 1 && !isGrab) {
-			isGrab = true;
-			birds.add(bird.clone());
-			currentBird = birds.children[birds.children.length - 1];
-			currentBird.position.fromArray(hand.palmPosition);
-			currentBird.scale.set(soSmall,soSmall,soSmall);
-		}
-		if (hand.grabStrength < 1 && isGrab) {
-			var scale = (1 - hand.grabStrength) ? 1 - hand.grabStrength : soSmall;
-			currentBird.scale.set(scale,scale,scale);
-		}
-		if (hand.grabStrength === 0 && isGrab) {
-			isGrab = false;
-			birdBodies.push(new CANNON.Body({
-				mass: 1,
-				shape: birdShape,
-				position: currentBird.position
-			}));
-			world.add(birdBodies[birdBodies.length - 1]);
-		}
+		frame.hands.forEach(function (hand) {
+			if (hand.grabStrength === 1 && !isGrab[frame.hands.indexOf(hand)]) {
+				isGrab[frame.hands.indexOf(hand)] = true;
+				birds.add(bird.clone());
+				currentBirds[frame.hands.indexOf(hand)] = birds.children[birds.children.length - 1];
+				currentBirds[frame.hands.indexOf(hand)].position.fromArray(hand.palmPosition);
+				currentBirds[frame.hands.indexOf(hand)].scale.set(soSmall,soSmall,soSmall);
+			}
+			if (hand.grabStrength < 1 && isGrab[frame.hands.indexOf(hand)]) {
+				var scale = (1 - hand.grabStrength) ? 1 - hand.grabStrength : soSmall;
+				currentBirds[frame.hands.indexOf(hand)].scale.set(scale,scale,scale);
+			}
+			if (hand.grabStrength === 0 && isGrab[frame.hands.indexOf(hand)]) {
+				isGrab[frame.hands.indexOf(hand)] = false;
+				birdBodies.push(new CANNON.Body({
+					mass: 1,
+					shape: birdShape,
+					position: currentBirds[frame.hands.indexOf(hand)].position
+				}));
+				world.add(birdBodies[birdBodies.length - 1]);
+			}
+		});
 	}
 });
