@@ -53,7 +53,6 @@ function init () {
 
 	var mtlLoader = new THREE.MTLLoader();
 	mtlLoader.load('models/bird.mtl', function (mtl) {
-		console.log(mtl);
 		mtl.preload();
 		var objLoader = new THREE.OBJLoader();
 		objLoader.setMaterials(mtl);
@@ -112,5 +111,12 @@ Leap.loop(function (frame) {
 				world.add(birdBodies[birdBodies.length - 1]);
 			}
 		});
+		if (!isHandsPinch && frame.hands.length === 2 && frame.hands[0].pinchStrength === 1 && frame.hands[1].pinchStrength === 1) {
+			isHandsPinch = true;
+		}
+		else if (isHandsPinch && frame.hands.length === 2 && frame.hands[0].pinchStrength === 0 && frame.hands[1].pinchStrength === 0) {
+			world.gravity.y = (world.gravity.y) ? 0 : -100;
+			isHandsPinch = false;
+		}
 	}
 });
