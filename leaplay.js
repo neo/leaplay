@@ -105,10 +105,16 @@ Leap.loop(function (frame) {
 			}
 			if (hand.grabStrength === 0 && isGrab[frame.hands.indexOf(hand)]) {
 				isGrab[frame.hands.indexOf(hand)] = false;
+				var v = new THREE.Vector3();
+				var ary = hand.palmVelocity.map(function (v) {
+					return v / 10;
+				})
+				v.fromArray(ary);
 				birdBodies.push(new CANNON.Body({
 					mass: 1,
 					shape: birdShape,
-					position: currentBirds[frame.hands.indexOf(hand)].position
+					position: currentBirds[frame.hands.indexOf(hand)].position,
+					velocity: v
 				}));
 				world.add(birdBodies[birdBodies.length - 1]);
 			}
