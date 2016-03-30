@@ -76,6 +76,8 @@ var render = function () {
 init();
 render();
 
+var gravity = document.querySelector('#switch');
+
 var isHandsPinch = false;
 var isGrab = [false, false];
 var soSmall = 0.01;
@@ -115,7 +117,13 @@ Leap.loop(function (frame) {
 			isHandsPinch = true;
 		}
 		else if (isHandsPinch && frame.hands.length === 2 && frame.hands[0].pinchStrength === 0 && frame.hands[1].pinchStrength === 0) {
-			world.gravity.y = (world.gravity.y) ? 0 : -100;
+			if (world.gravity.y) {
+				world.gravity.y = 0;
+				gravity.textContent = 'OFF';
+			} else {
+				world.gravity.y = -100;
+				gravity.textContent = 'ON';
+			}
 			isHandsPinch = false;
 		}
 	}
