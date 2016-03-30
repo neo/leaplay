@@ -1,6 +1,6 @@
 var scene, camera, renderer, world, hands, birds, timestep = 1/60;
 
-var bird;
+var bird, wall;
 var ballGeometry = new THREE.SphereGeometry(4,32,32);
 var handBodies = [], ballShape = new CANNON.Sphere(4);
 var birdBodies = [], birdShape = new CANNON.Sphere(10);
@@ -47,6 +47,14 @@ function init () {
 	floorMesh.quaternion.copy(floorBody.quaternion);
 	scene.add(floorMesh);
 
+	var sky = new THREE.TextureLoader().load('sky.jpg');
+	wall = new THREE.Mesh(new THREE.SphereGeometry(500,32,32), new THREE.MeshBasicMaterial({
+		map: sky,
+		side: THREE.DoubleSide
+	}));
+	wall.position.y = 400;
+	scene.add(wall);
+
 	var lights = [];
 	lights.push(new THREE.HemisphereLight(0xffffbb, 0x424242, 1));
 	for (var i = lights.length - 1; i >= 0; i--) scene.add(lights[i]);
@@ -71,6 +79,8 @@ var render = function () {
 		birds.children[i].position.copy(birdBodies[i].position);
 		birds.children[i].quaternion.copy(birdBodies[i].quaternion);
 	}
+	wall.rotation.y += 0.001;
+
 };
 
 init();
