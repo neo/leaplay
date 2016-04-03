@@ -79,7 +79,7 @@ var render = function () {
 		birds.children[i].position.copy(birdBodies[i].position);
 		birds.children[i].quaternion.copy(birdBodies[i].quaternion);
 	}
-	wall.rotation.y += 0.001;
+	wall.rotation.y += 0.0002;
 
 };
 
