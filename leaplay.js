@@ -31,7 +31,11 @@ function init () {
 	birds = new THREE.Object3D();
 	scene.add(hands, birds);
 
-	for (var i = 0; i < 10; i++) hands.add(new THREE.Mesh(ballGeometry, material));
+	for (var i = 0; i < 10; i++) {
+		var dip = new THREE.Mesh(ballGeometry, material);
+		dip.castShadow = true;
+		hands.add(dip);
+	}
 	for (var i = 0; i < 10; i++) handBodies.push(new CANNON.Body({mass: 0,shape: ballShape}));
 	for (var i = handBodies.length - 1; i >= 0; i--) world.add(handBodies[i]);
 
@@ -43,6 +47,7 @@ function init () {
 	floorBody.position.set(0,100,0);
 	world.add(floorBody);
 	var floorMesh = new THREE.Mesh(new THREE.PlaneGeometry(500,500), material);
+	floorMesh.receiveShadow = true;
 	floorMesh.position.copy(floorBody.position);
 	floorMesh.quaternion.copy(floorBody.quaternion);
 	scene.add(floorMesh);
@@ -56,8 +61,15 @@ function init () {
 	scene.add(wall);
 
 	var lights = [];
-	lights.push(new THREE.HemisphereLight(0xffffbb, 0x424242, 1));
+	lights.push(new THREE.HemisphereLight(0xffffff, 0x424242, 1));
+	lights.push(new THREE.PointLight(0xffffff, 0.5, 0));
+	lights[1].position.y = 500;
+	lights[1].castShadow = true;
+	lights[1].shadow.mapSize = new THREE.Vector2(2048, 2048);
 	for (var i = lights.length - 1; i >= 0; i--) scene.add(lights[i]);
+
+	renderer.shadowMap.enabled = true;
+	renderer.shadowMapSoft = true;
 
 	var mtlLoader = new THREE.MTLLoader();
 	mtlLoader.load('models/bird.mtl', function (mtl) {
@@ -65,6 +77,7 @@ function init () {
 		var objLoader = new THREE.OBJLoader();
 		objLoader.setMaterials(mtl);
 		objLoader.load('models/bird.obj', function (obj) {
+			obj.children.forEach(function (child) {child.castShadow = true;});
 			bird = obj;
 		});
 	});
@@ -73,6 +86,7 @@ function init () {
 		var objLoader = new THREE.OBJLoader();
 		objLoader.setMaterials(mtl);
 		objLoader.load('models/panda.obj', function (obj) {
+			obj.children.forEach(function (child) {child.castShadow = true;});
 			panda = obj;
 		});
 	});
