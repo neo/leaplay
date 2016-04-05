@@ -1,6 +1,6 @@
 var scene, camera, renderer, world, hands, birds, timestep = 1/60;
 
-var bird, wall;
+var bird, wall, panda;
 var ballGeometry = new THREE.SphereGeometry(4,32,32);
 var handBodies = [], ballShape = new CANNON.Sphere(4);
 var birdBodies = [], birdShape = new CANNON.Sphere(10);
@@ -68,6 +68,14 @@ function init () {
 			bird = obj;
 		});
 	});
+	mtlLoader.load('models/panda.mtl', function (mtl) {
+		mtl.preload();
+		var objLoader = new THREE.OBJLoader();
+		objLoader.setMaterials(mtl);
+		objLoader.load('models/panda.obj', function (obj) {
+			panda = obj;
+		});
+	});
 }
 
 var render = function () {
@@ -80,7 +88,6 @@ var render = function () {
 		birds.children[i].quaternion.copy(birdBodies[i].quaternion);
 	}
 	wall.rotation.y += 0.0002;
-
 };
 
 init();
@@ -104,7 +111,7 @@ Leap.loop(function (frame) {
 		frame.hands.forEach(function (hand) {
 			if (hand.grabStrength === 1 && !isGrab[frame.hands.indexOf(hand)]) {
 				isGrab[frame.hands.indexOf(hand)] = true;
-				birds.add(bird.clone());
+				birds.add((Math.random() < 0.2) ? panda.clone() : bird.clone());
 				currentBirds[frame.hands.indexOf(hand)] = birds.children[birds.children.length - 1];
 				currentBirds[frame.hands.indexOf(hand)].position.fromArray(hand.palmPosition);
 				currentBirds[frame.hands.indexOf(hand)].scale.set(soSmall,soSmall,soSmall);
