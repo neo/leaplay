@@ -31,6 +31,7 @@ function init () {
 
 	hands = new THREE.Object3D();
 	birds = new THREE.Object3D();
+	clouds = new THREE.Object3D();
 	scene.add(hands, birds);
 
 	for (var i = 0; i < 10; i++) {
@@ -63,10 +64,14 @@ function init () {
 
 	var lights = [];
 	lights.push(new THREE.HemisphereLight(0xffffff, 0x424242, 1));
-	lights.push(new THREE.PointLight(0xffffff, 0.5, 0));
+	lights.push(new THREE.PointLight(0xffffff, 0.3, 0));
 	lights[1].position.set(0,500,500);
-	lights[1].castShadow = true;
+	// lights[1].castShadow = true;
 	lights[1].shadow.mapSize = new THREE.Vector2(2048, 2048);
+	lights.push(new THREE.PointLight(0xffffff, 0.2, 0));
+	lights[2].position.y = 500;
+	lights[2].castShadow = true;
+	lights[2].shadow.mapSize = new THREE.Vector2(2048, 2048);
 	for (var i = lights.length - 1; i >= 0; i--) scene.add(lights[i]);
 
 	renderer.shadowMap.enabled = true;
@@ -97,7 +102,6 @@ function init () {
 		objLoader.setMaterials(mtl);
 		objLoader.load('models/cloud.obj', function (obj) {
 			cloud = obj;
-			clouds = new THREE.Object3D();
 			scene.add(clouds);
 			var n = 15;
 			for (var i = 0; i < n; i++) {
