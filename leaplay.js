@@ -1,6 +1,6 @@
-var scene, camera, renderer, world, hands, birds, timestep = 1/60;
+var scene, camera, renderer, world, hands, birds, clouds, timestep = 1/60;
 
-var bird, wall, panda;
+var bird, wall, panda, cloud;
 var ballGeometry = new THREE.SphereGeometry(4,32,32);
 var handBodies = [], ballShape = new CANNON.Sphere(4);
 var birdBodies = [], birdShape = new CANNON.Sphere(10);
@@ -10,6 +10,8 @@ var material = new THREE.MeshPhongMaterial({
 	side: THREE.DoubleSide,
 	shading: THREE.FlatShading
 });
+var cloudMoveX = (Math.random() - 0.5) / 10;
+var cloudMoveZ = (Math.random() - 0.5) / 10;
 
 function init () {
 	scene = new THREE.Scene();
@@ -63,7 +65,7 @@ function init () {
 	var lights = [];
 	lights.push(new THREE.HemisphereLight(0xffffff, 0x424242, 1));
 	lights.push(new THREE.PointLight(0xffffff, 0.5, 0));
-	lights[1].position.y = 500;
+	lights[1].position.set(0,500,500);
 	lights[1].castShadow = true;
 	lights[1].shadow.mapSize = new THREE.Vector2(2048, 2048);
 	for (var i = lights.length - 1; i >= 0; i--) scene.add(lights[i]);
@@ -90,6 +92,21 @@ function init () {
 			panda = obj;
 		});
 	});
+	mtlLoader.load('models/cloud.mtl', function (mtl) {
+		mtl.preload();
+		var objLoader = new THREE.OBJLoader();
+		objLoader.setMaterials(mtl);
+		objLoader.load('models/cloud.obj', function (obj) {
+			cloud = obj;
+			clouds = new THREE.Object3D();
+			scene.add(clouds);
+			var n = 15;
+			for (var i = 0; i < n; i++) {
+				clouds.add(cloud.clone());
+				clouds.children[i].position.set(Math.random()*800-400,Math.random()*200+300,Math.random()*300-250);
+			}
+		});
+	});
 }
 
 var render = function () {
@@ -102,6 +119,8 @@ var render = function () {
 		birds.children[i].quaternion.copy(birdBodies[i].quaternion);
 	}
 	wall.rotation.y += 0.0002;
+	clouds.position.x += cloudMoveX;
+	clouds.position.z += cloudMoveZ;
 };
 
 init();
