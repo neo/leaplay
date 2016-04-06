@@ -54,10 +54,9 @@ function init () {
 	floorMesh.quaternion.copy(floorBody.quaternion);
 	scene.add(floorMesh);
 
-	var sky = new THREE.TextureLoader().load('sky.jpg');
-	wall = new THREE.Mesh(new THREE.SphereGeometry(500,32,32), new THREE.MeshBasicMaterial({
-		map: sky,
-		side: THREE.DoubleSide
+	wall = new THREE.Mesh(new THREE.SphereGeometry(500,32,32), new THREE.MeshLambertMaterial({
+		color: 'skyblue',
+		side: THREE.BackSide
 	}));
 	wall.position.y = 400;
 	scene.add(wall);
@@ -118,7 +117,6 @@ var render = function () {
 		birds.children[i].position.copy(birdBodies[i].position);
 		birds.children[i].quaternion.copy(birdBodies[i].quaternion);
 	}
-	wall.rotation.y += 0.0002;
 	clouds.position.x += cloudMoveX;
 	clouds.position.z += cloudMoveZ;
 };
