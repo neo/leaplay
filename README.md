@@ -121,6 +121,9 @@ An Interactive 3D scene with Leap Motion. Featuring
 	mesh.quaternion.copy(body.quaternion);
 	```
 
+	You can find a full example and more from
+	[here](https://github.com/schteppe/cannon.js/tree/master/examples#threejs).
+
 5. Use the Leap Motion JavaScript SDK to track the hands
 
 	```JavaScript
@@ -133,3 +136,5 @@ An Interactive 3D scene with Leap Motion. Featuring
 	There's a
 	[complete documentation](https://developer.leapmotion.com/documentation/javascript/index.html)
 	from the Leap Motion developer website.
+
+**After setting up all these above, you can start your own thing and get it going!**
