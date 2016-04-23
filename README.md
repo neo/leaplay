@@ -34,7 +34,7 @@ An Interactive 3D scene with Leap Motion. Featuring
 			<title>My first Three.js app</title>
 			<style>
 				body { margin: 0; }
-				canvas { width: 100%; height: 100% }
+				canvas { width: 100%; height: 100%; }
 			</style>
 		</head>
 		<body>
@@ -138,3 +138,7 @@ An Interactive 3D scene with Leap Motion. Featuring
 	from the Leap Motion developer website.
 
 **After setting up all these above, you can start your own thing and get it going!**
+
+*There is also a [plugin] I built to have three.js and cannon.js working together.*
+
+[plugin]: https://github.com/neolwc/three-cannon
